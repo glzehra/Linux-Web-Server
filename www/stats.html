@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cache Statistics Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        #stats-content {
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 2rem;
+            background-color: #f9f9f9;
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        #stats-content h2{
+            color: #003366;
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Cache Statistics</h1>
+        <p class="tagline">Displaying server cache information</p>
+    </header>
+
+    <main>
+        <section class="content">
+            <div id="stats-content">Loading...</div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 My Web Server. All rights reserved.</p>
+    </footer>
+
+    <script>
+        async function fetchStats() {
+            try {
+                const response = await fetch('/stats');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const text = await response.text();
+
+                // Basic HTML structure within stats-content
+                const statsHTML = `<h2>Server Cache Statistics</h2><pre>${text}</pre>`;
+                document.getElementById('stats-content').innerHTML = statsHTML;
+
+            } catch (error) {
+                console.error('Failed to fetch stats:', error);
+                document.getElementById('stats-content').innerHTML = 'Failed to fetch stats. Check console for errors.';
+            }
+        }
+
+        async function fetchFile(filePath) {
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const text = await response.text();
+                console.log(`Successfully fetched ${filePath}`);
+            } catch (error) {
+                console.error(`Failed to fetch ${filePath}:`, error);
+            }
+        }
+
+        window.onload = function() {
+            fetchStats();
+            fetchFile('/index.html');
+            fetchFile('/style.css');
+            fetchFile('/404.html');
+            setTimeout(fetchStats, 1000);
+        };
+    </script>
+</body>
+</html>

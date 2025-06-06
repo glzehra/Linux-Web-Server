@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* ... (same styles as before) ... */
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Calculator</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about.html">About Us</a></li>
+                <li><a href="/secure/secret.html">Secret Page</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="calculator-form">
+            <h2>Perform Calculation</h2>
+            <form action="/cgi-bin/calculator.cgi" method="GET" id="calculator-form">
+                <div class="input-group">
+                    <label for="num1">Number 1:</label>
+                    <input type="text" id="num1" name="num1">
+                </div>
+                <div class="input-group">
+                    <label for="num2">Number 2:</label>
+                    <input type="text" id="num2" name="num2">
+                </div>
+                <div class="input-group">
+                    <label for="operation">Operation:</label>
+                    <select id="operation" name="op">
+                        <option value="add">Add</option>
+                        <option value="subtract">Subtract</option>
+                        <option value="multiply">Multiply</option>
+                        <option value="divide">Divide</option>
+                    </select>
+                </div>
+                <button type="submit">Calculate</button>
+            </form>
+            <div id="result"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 My Web Server. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('calculator-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const num1 = document.getElementById('num1').value;
+            const num2 = document.getElementById('num2').value;
+            const operation = document.getElementById('operation').value;
+
+            if (!num1.trim() || !num2.trim() || isNaN(Number(num1)) || isNaN(Number(num2))) {
+                document.getElementById('result').textContent = "Please enter valid numbers.";
+                return;
+            }
+
+            const url = `/cgi-bin/calculator.cgi?num1=${encodeURIComponent(num1)}&num2=${encodeURIComponent(num2)}&op=${encodeURIComponent(operation)}`;
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('result').textContent = `Result: ${data}`;
+                })
+                .catch(error => {
+                    console.error('Error fetching result:', error);
+                    document.getElementById('result').textContent = "Failed to perform calculation.";
+                });
+        });
+    </script>
+</body>
+</html>
